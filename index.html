@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10131b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="P4記録">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>絶妖星乱舞 P4 記録ツール</title>
+<style>
+:root{color-scheme:dark;--bg:#10131b;--panel:#191e29;--panel2:#222938;--line:#343d50;--text:#f4f6fb;--muted:#aeb8ca;--blue:#3478f6;--green:#1d9b70;--red:#c94e60;--amber:#d39b36}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 12px calc(20px + env(safe-area-inset-bottom));max-width:900px;margin-inline:auto}
+header{position:sticky;top:0;z-index:5;background:rgba(16,19,27,.96);backdrop-filter:blur(12px);padding:12px 0 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font-size:20px;line-height:1.2;margin:0} .sub{color:var(--muted);font-size:12px;margin-top:4px}.pill{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:5px 8px;color:var(--muted);white-space:nowrap}
+nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.tab{height:42px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-weight:700}.tab.active{background:var(--blue);border-color:var(--blue)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:13px;margin:12px 0 7px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pick{min-height:44px;min-width:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-weight:700;font-size:13px;padding:5px 4px;touch-action:manipulation;cursor:pointer}
+.pick.selected{background:var(--blue);border-color:#75a2ff;box-shadow:0 0 0 1px #75a2ff inset}
+.pick.small{min-height:40px}
+.field{margin:12px 0 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+input,textarea,select{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px;width:100%}textarea{min-height:72px;resize:vertical}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.action{min-height:46px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:700}.action.primary{background:var(--green);border-color:var(--green)}.action.danger{color:#ffb9c2;border-color:#743745}
+.result{border:1px solid #426caa;background:#17263d;border-radius:12px;padding:12px;margin-top:10px}.result strong{display:block;margin-bottom:6px}.muted{color:var(--muted);font-size:12px;line-height:1.5}.tag{display:inline-block;background:#2b3548;border-radius:6px;padding:4px 7px;margin:2px;font-size:12px}
+.history-item{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px;margin:9px 0}.history-item h3{margin:0 0 7px;color:var(--text);font-size:14px}.history-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.history-actions button{min-height:36px;padding:5px 10px}
+.hidden{display:none!important}.foot{font-size:11px;color:var(--muted);line-height:1.5;padding:8px 2px 18px}
+@media(min-width:650px){body{padding-left:20px;padding-right:20px}.entry-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div><h1>絶妖星乱舞 P4</h1><div class="sub">ギミック記録・パターン照合</div></div><span class="pill">端末内保存</span></header>
+<nav><button class="tab active" id="tabEntry">記録・判定</button><button class="tab" id="tabHistory">試行履歴 <span id="count">0</span></button></nav>
+<main id="entryView">
+<div class="entry-columns">
+<section class="panel">
+<h2>① グランドクロス 1回目</h2>
+<h3>真偽</h3><div class="grid two" data-group="gc1"><button class="pick" data-value="true">本当 ●</button><button class="pick" data-value="false">嘘 ●?</button></div>
+<h3>水属性圧縮</h3><div class="grid" data-group="water1"><button class="pick" data-value="early">早</button><button class="pick" data-value="late">遅</button><button class="pick" data-value="unknown">未確認</button></div>
+<h3>フォークライトニング</h3><div class="grid" data-group="lightning1"><button class="pick" data-value="early">早</button><button class="pick" data-value="late">遅</button><button class="pick" data-value="unknown">未確認</button></div>
+<h3>加速度爆弾</h3><div class="grid" data-group="accel1"><button class="pick" data-value="move">動く</button><button class="pick" data-value="stop">止まる</button><button class="pick" data-value="unknown">未確認</button></div>
+</section>
+<section class="panel">
+<h2>② カオス 1回目</h2>
+<h3>技・属性</h3><div class="grid two" data-group="chaos1"><button class="pick" data-value="fire">ほのお</button><button class="pick" data-value="water">つなみ</button></div>
+<h3>真偽</h3><div class="grid two" data-group="chaosTruth1"><button class="pick" data-value="true">本当</button><button class="pick" data-value="false">嘘</button></div>
+<div class="muted">ヤーン速報の解説では、ほのお／つなみの順番はランダム。技と真偽をそれぞれ記録します。</div>
+</section>
+<section class="panel">
+<h2>③ グランドクロス 2回目</h2>
+<h3>真偽</h3><div class="grid two" data-group="gc2"><button class="pick" data-value="true">本当 ●</button><button class="pick" data-value="false">嘘 ●?</button></div>
+<h3>水属性圧縮</h3><div class="grid" data-group="water2"><button class="pick" data-value="early">早</button><button class="pick" data-value="late">遅</button><button class="pick" data-value="unknown">未確認</button></div>
+<h3>フォークライトニング</h3><div class="grid" data-group="lightning2"><button class="pick" data-value="early">早</button><button class="pick" data-value="late">遅</button><button class="pick" data-value="unknown">未確認</button></div>
+<h3>加速度爆弾</h3><div class="grid" data-group="accel2"><button class="pick" data-value="move">動く</button><button class="pick" data-value="stop">止まる</button><button class="pick" data-value="unknown">未確認</button></div>
+</section>
+<section class="panel">
+<h2>④ カオス 2回目</h2>
+<h3>技・属性</h3><div class="grid two" data-group="chaos2"><button class="pick" data-value="fire">ほのお</button><button class="pick" data-value="water">つなみ</button></div>
+<h3>真偽</h3><div class="grid two" data-group="chaosTruth2"><button class="pick" data-value="true">本当</button><button class="pick" data-value="false">嘘</button></div>
+<div class="muted">通常、2回目は1回目と異なる属性です。実際の観測内容をそのまま記録できます。</div>
+</section>
+<section class="panel">
+<h2>⑤ グランドクロス 3回目</h2>
+<h3>傷デバフ</h3><div class="grid" data-group="wound3"><button class="pick" data-value="living">生者の傷</button><button class="pick" data-value="dead">死者の傷</button><button class="pick" data-value="unknown">未確認</button></div>
+<h3>追加デバフ</h3><div class="grid" data-group="debuff3"><button class="pick" data-value="field">アラガンフィールド</button><button class="pick" data-value="transcendence">死の超越</button><button class="pick" data-value="unknown">未確認</button></div>
+</section>
+<section class="panel">
+<h2>⑥ マジックチャージ</h2>
+<h3>記憶した床・属性パターン</h3><div class="grid" data-group="magic"><button class="pick" data-value="ice">氷</button><button class="pick" data-value="lightning">雷</button><button class="pick" data-value="both">氷＋雷</button></div>
+<div class="field"><label for="memo">メモ・ミス原因（任意）</label><textarea id="memo" placeholder="例：加速度の判断ミス／視線処理が遅れた"></textarea></div>
+</section>
+</div>
+<div class="actions"><button class="action primary" id="judge">入力内容を照合</button><button class="action" id="save">試行を保存</button></div>
+<div class="result" id="result"><strong>判定待ち</strong><div class="muted">ギミックを選択して「入力内容を照合」を押してください。未入力の項目は未確認として扱います。</div></div>
+<div class="foot">注意：この初版は入力内容の整理とパターンキー生成に対応しています。ヤーン速報の図版・全条件の対応表を完全に符号化した攻略手順判定は未実装です。未登録の処理を推測で表示しません。</div>
+</main>
+<main id="historyView" class="hidden"><section class="panel"><h2>保存済み試行</h2><div class="muted">記録はこの端末のブラウザ内に保存されます。Safariの履歴・Webサイトデータを消去すると失われる場合があります。</div><div id="historyList"></div><div class="actions"><button class="action" id="export">履歴をテキスト出力</button><button class="action danger" id="clear">全履歴を削除</button></div></section></main>
+<script>
+const fields={gc1:'GC1真偽',water1:'GC1水圧縮',lightning1:'GC1フォークライトニング',accel1:'GC1加速度',chaos1:'カオス1技',chaosTruth1:'カオス1真偽',gc2:'GC2真偽',water2:'GC2水圧縮',lightning2:'GC2フォークライトニング',accel2:'GC2加速度',chaos2:'カオス2技',chaosTruth2:'カオス2真偽',wound3:'GC3傷',debuff3:'GC3追加デバフ',magic:'マジックチャージ'};
+const labels={true:'本当',false:'嘘',early:'早',late:'遅',unknown:'未確認',move:'動く',stop:'止まる',fire:'ほのお',water:'つなみ',living:'生者の傷',dead:'死者の傷',field:'アラガンフィールド',transcendence:'死の超越',ice:'氷',lightning:'雷',both:'氷＋雷'};
+let state={};document.querySelectorAll('[data-group]').forEach(group=>{group.addEventListener('click',e=>{const b=e.target.closest('button[data-value]');if(!b)return;const key=group.dataset.group;state[key]=b.dataset.value;group.querySelectorAll('.pick').forEach(x=>x.classList.toggle('selected',x===b));})});
+function readState(){return {...state,memo:document.getElementById('memo').value.trim()}}
+function patternKey(s){return `GC1:${s.gc1||'?'} / GC2:${s.gc2||'?'} / Chaos:${s.chaos1||'?'}-${s.chaosTruth1||'?'},${s.chaos2||'?'}-${s.chaosTruth2||'?'}`;}
+function judge(){const s=readState();const missing=Object.keys(fields).filter(k=>!s[k]||s[k]==='unknown');const sameGC=s.gc1&&s.gc2?(s.gc1===s.gc2?'同じ真偽':'異なる真偽'):'未確定';const chaosOrder=s.chaos1&&s.chaos2?(s.chaos1===s.chaos2?'同じ属性（要確認）':'ほのお／つなみ各1回'):'未確定';let html=`<strong>入力パターンを照合しました</strong><div><span class="tag">${patternKey(s)}</span></div><p>GC1・GC2：${sameGC}<br>カオス属性：${chaosOrder}<br>未入力・未確認：${missing.length}項目</p><div class="muted">判定結果は入力の分類です。攻略手順の正確な対応表が未登録のため、立ち位置・移動指示はまだ表示しません。</div>`;document.getElementById('result').innerHTML=html;return s}
+document.getElementById('judge').addEventListener('click',judge);
+function getHistory(){try{return JSON.parse(localStorage.getItem('ff14p4-history')||'[]')}catch(e){return []}}
+function putHistory(h){localStorage.setItem('ff14p4-history',JSON.stringify(h));renderHistory()}
+document.getElementById('save').addEventListener('click',()=>{const s=readState();if(!Object.keys(state).length){alert('先にギミック情報を選択してください');return}const h=getHistory();h.unshift({id:Date.now(),date:new Date().toLocaleString('ja-JP'),state:s,outcome:'未評価',key:patternKey(s)});putHistory(h);judge();alert('この試行を端末内に保存しました')});
+function renderHistory(){const h=getHistory();document.getElementById('count').textContent=h.length;const root=document.getElementById('historyList');if(!h.length){root.innerHTML='<p class="muted">まだ履歴がありません。</p>';return}root.innerHTML=h.map(item=>`<article class="history-item"><h3>${escapeHtml(item.date)} · ${escapeHtml(item.outcome)}</h3><div class="muted">${escapeHtml(item.key)}</div><div>${escapeHtml(item.state.memo||'メモなし')}</div><div class="history-actions"><button class="action" data-outcome="${item.id}">結果：${item.outcome}（切替）</button><button class="action danger" data-delete="${item.id}">削除</button></div></article>`).join('');root.querySelectorAll('[data-outcome]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.outcome);putHistory(getHistory().map(x=>x.id===id?{...x,outcome:x.outcome==='未評価'?'成功':x.outcome==='成功'?'失敗':'未評価'}:x))});root.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{if(confirm('この試行を削除しますか？'))putHistory(getHistory().filter(x=>x.id!==Number(b.dataset.delete)))})}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('tabEntry').onclick=()=>{document.getElementById('entryView').classList.remove('hidden');document.getElementById('historyView').classList.add('hidden');document.getElementById('tabEntry').classList.add('active');document.getElementById('tabHistory').classList.remove('active')};
+document.getElementById('tabHistory').onclick=()=>{renderHistory();document.getElementById('historyView').classList.remove('hidden');document.getElementById('entryView').classList.add('hidden');document.getElementById('tabHistory').classList.add('active');document.getElementById('tabEntry').classList.remove('active')};
+document.getElementById('export').onclick=()=>{const txt=getHistory().map(x=>`${x.date}\n${x.key}\n結果：${x.outcome}\n${Object.entries(x.state).filter(([k,v])=>k!=='memo'&&v).map(([k,v])=>`${fields[k]||k}: ${labels[v]||v}`).join(' / ')}\nメモ：${x.state.memo||'なし'}`).join('\n\n');if(!txt){alert('履歴がありません');return}const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='FF14-P4-履歴.txt';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('clear').onclick=()=>{if(confirm('保存済みの履歴をすべて削除します。この操作は元に戻せません。')){localStorage.removeItem('ff14p4-history');renderHistory()}};
+renderHistory();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
